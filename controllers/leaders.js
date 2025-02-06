@@ -23,12 +23,12 @@ export const addScore = asyncHandler(async (req, res) => {
     found = new Leader({ username: user.username, score });
     await found.save();
 
-    return res.status(201).json(found);
+    return res.status(201).json({ message: "User added successfully", found });
   }
 
   found.score = score;
   await found.save();
   await user.updateOne({score});
 
-  res.status(200).json({ message: "Score updated", leader: found });
+  res.status(200).json({ message: "User updated successfully", leader: found });
 });

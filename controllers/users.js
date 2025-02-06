@@ -12,9 +12,6 @@ export const createUser = asyncHandler(async (req, res) => {
   if (!username || !password)
     throw new ErrorResponse("username and password are required", 400);
 
-  // const found = await User.findOne({ username });
-  // if (found) throw new ErrorResponse('This username is already taken', 400);
-
   const user = await User.create({ username, password, rooster: [] });
   res.status(201).json(user);
 });
@@ -58,14 +55,16 @@ export const addPokemonToUser = asyncHandler(async (req, res) => {
 
   const user = await User.findById(id);
   if (!user) throw new ErrorResponse("User not found", 404);
-  console.log(user)
     const found = user.roster.find((id) => id == pokemonId);
   if (found) throw new ErrorResponse("Pokemon already added", 400);
 
   user.roster.push( pokemonId );
   await user.save();
 
-  res.status(201).json(user);
+  res.status(201).json({
+    message: "Pokemon added successfully!",
+    user,
+  });
 });
 
 export const deletePokemonFromUser = asyncHandler(async (req, res) => {
@@ -79,5 +78,8 @@ export const deletePokemonFromUser = asyncHandler(async (req, res) => {
   user.roster.splice(index, 1);
   await user.save();
 
-  res.status(200).json(user);
+  res.status(201).json({
+    message: "Pokemon deleted successfully!",
+    user,
+  });
 });
