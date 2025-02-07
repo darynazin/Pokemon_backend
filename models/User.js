@@ -1,12 +1,10 @@
 import { Schema, model } from 'mongoose';
 
-const RosterSchema = new Schema({
-});
- 
 const userSchema = new Schema({
-  username: { type: String, required: true },
-  password: { type: String, required: true },
-  userRoster: [RosterSchema]
+  username: { type: String, required: true, unique: true },
+  password: { type: String, minlength: 8 , required: true },
+  roster: [{ type: Number }],
+  score: { type: Number, default: 0 },
 });
  
 export default model('User', userSchema);
