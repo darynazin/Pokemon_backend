@@ -83,30 +83,7 @@ http://localhost:8080
     }
   ```
 
-#### 3. **Create a New User**
-
-- **URL**: `/users`
-- **Method**: `POST`
-- **Body** (JSON):
-  ```json
-  {
-    "username": "Amy",
-    "password": "12345432"
-  }
-  ```
-- **Response**:
-  ```json
-  {
-    "username": "Amy",
-    "password": "12345432",
-    "roster": [],
-    "score": 0,
-    "_id": "67a4ad9934086150ee8394fa",
-    "__v": 0
-  }
-  ```
-
-#### 4. **Update a User by ID**
+#### 3. **Update a User by ID**
 
 - **URL**: `/users/:id`
 - **Method**: `PUT`
@@ -129,7 +106,7 @@ http://localhost:8080
   }
   ```
 
-#### 5. **Delete a User by ID**
+#### 4. **Delete a User by ID**
 
 - **URL**: `/users/:id`
 - **Method**: `DELETE`
@@ -140,7 +117,7 @@ http://localhost:8080
   }
   ```
 
-#### 6. **Add Pokemon to User roster**
+#### 5. **Add Pokemon to User roster**
 
 - **URL**: `/users/:id/roster/pokemonId`
 - **Method**: `POST`
@@ -161,7 +138,7 @@ http://localhost:8080
   }
   ```
 
-#### 7. **Delete Pokemon from User roster**
+#### 6. **Delete Pokemon from User roster**
 
 - **URL**: `/users/:id/roster/pokemonId`
 - **Method**: `DELETE`
@@ -180,7 +157,7 @@ http://localhost:8080
   }
   ```
 
-  #### 8. **Get Users from Leaderbord**
+  #### 7. **Get Users from Leaderbord**
 
 - **URL**: `/leaders`
 - **Method**: `GET`
