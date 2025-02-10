@@ -47,6 +47,16 @@ export const login = asyncHandler(async (req, res, next) => {
   }
 
   const token = generateToken(user._id);
+  res
+    .status(200)
+    .json({
+      success: true,
+      token,
+      username: user.username,
+      image: user.image,
+      email: user.email,
+      id: user._id,
+    });
 
   res.status(200).json({ success: true, token });
 });
@@ -99,17 +109,17 @@ export const deleteUser = asyncHandler(async (req, res) => {
 });
 
 export const addPokemonToUser = asyncHandler(async (req, res) => {
-  const { id, pokemonId } = req.params;
-  console.log(id, pokemonId)
+  const { id, pokemon } = req.params;
+  console.log(id, pokemon)
 
-  if (!pokemonId) throw new ErrorResponse("Pokemon Id is required", 400);
+  if (!pokemon) throw new ErrorResponse("Pokemon Id is required", 400);
 
   const user = await User.findById(id);
   if (!user) throw new ErrorResponse("User not found", 404);
-    const found = user.roster.find((id) => id == pokemonId);
+    const found = user.roster.find((id) => id == pokemon);
   if (found) throw new ErrorResponse("Pokemon already added", 400);
 
-  user.roster.push( pokemonId );
+  user.roster.push( pokemon );
   await user.save();
 
   res.status(201).json({
@@ -119,11 +129,11 @@ export const addPokemonToUser = asyncHandler(async (req, res) => {
 });
 
 export const deletePokemonFromUser = asyncHandler(async (req, res) => {
-  const { id, pokemonId } = req.params;
+  const { id, pokemon } = req.params;
   const user = await User.findById(id);
   if (!user) throw new ErrorResponse("User not found", 404);
 
-  const index = user.roster.findIndex((id) => id == pokemonId);
+  const index = user.roster.findIndex((id) => id == pokemon);
   if (index === -1) throw new ErrorResponse("Pokemon not found", 404);
 
   user.roster.splice(index, 1);

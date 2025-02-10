@@ -21,7 +21,7 @@ userRouter.route("/logout").post(logout);
 userRouter.route("/").get(getUsers);
 
 userRouter.route("/:id").get(protect, getUserById).put(protect, updateUser).delete(protect, deleteUser);
-userRouter.route("/:id/roster/:pokemonId").post(protect, addPokemonToUser).delete(protect, deletePokemonFromUser);
+userRouter.route("/:id/roster/:pokemon").post(protect, addPokemonToUser).delete(protect, deletePokemonFromUser);
 
 // Protected route to get user roster
 userRouter.get("/roster", protect, async (req, res) => {

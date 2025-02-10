@@ -119,7 +119,7 @@ http://localhost:8080
 
 #### 5. **Add Pokemon to User roster**
 
-- **URL**: `/users/:id/roster/pokemonId`
+- **URL**: `/users/:id/roster/pokemon`
 - **Method**: `POST`
 - **Response**:
   ```json
@@ -140,7 +140,7 @@ http://localhost:8080
 
 #### 6. **Delete Pokemon from User roster**
 
-- **URL**: `/users/:id/roster/pokemonId`
+- **URL**: `/users/:id/roster/pokemon`
 - **Method**: `DELETE`
 - **Response**:
   ```json
