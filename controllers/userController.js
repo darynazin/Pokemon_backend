@@ -3,14 +3,48 @@ import asyncHandler from "../utils/asyncHandler.js";
 import ErrorResponse from "../utils/ErrorResponse.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { bucket } from "../config/firebase.js";
 
 // Register a new user
 export const register = asyncHandler(async (req, res, next) => {
   const { username, email, password } = req.body;
+  const file = req.file;
+  let imageUrl = "default-profile.png";
 
   const userExists = await User.findOne({ email });
   if (userExists) {
     return next(new ErrorResponse("User already exists", 400));
+  }
+
+  if (file) {
+    try {
+      const fileName = `images/${username}/${username}_${Date.now()}.${
+        file.mimetype.split("/")[1]
+      }`;
+      const fileUpload = bucket.file(fileName);
+
+      const blobStream = fileUpload.createWriteStream({
+        metadata: {
+          contentType: file.mimetype,
+        },
+      });
+
+      await new Promise((resolve, reject) => {
+        blobStream.on("error", reject);
+        blobStream.on("finish", resolve);
+        blobStream.end(file.buffer);
+      });
+
+      const [signedUrl] = await fileUpload.getSignedUrl({
+        action: "read",
+        expires: "03-01-2500",
+      });
+
+      imageUrl = signedUrl;
+    } catch (error) {
+      console.error("Firebase Upload Error:", error);
+      return next(new ErrorResponse("Image upload failed", 500));
+    }
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -19,11 +53,19 @@ export const register = asyncHandler(async (req, res, next) => {
     username,
     email,
     password: hashedPassword,
+    image: imageUrl,
   });
 
   const token = generateToken(user._id);
 
-  res.status(201).json({ success: true, token });
+  res.status(201).json({
+    success: true,
+    token,
+    username: user.username,
+    email: user.email,
+    id: user._id,
+    image: user.image,
+  });
 });
 
 // Login user
@@ -48,7 +90,16 @@ export const login = asyncHandler(async (req, res, next) => {
 
   const token = generateToken(user._id);
 
-  res.status(200).json({ success: true, token });
+  res.status(200).json({
+    success: true,
+    token,
+    image: user.image,
+    username: user.username,
+    email: user.email,
+    id: user._id,
+    roster: user.roster,
+    score: user.score,
+  });
 });
 
 // Logout user
@@ -100,16 +151,16 @@ export const deleteUser = asyncHandler(async (req, res) => {
 
 export const addPokemonToUser = asyncHandler(async (req, res) => {
   const { id, pokemonId } = req.params;
-  console.log(id, pokemonId)
+  console.log(id, pokemonId);
 
   if (!pokemonId) throw new ErrorResponse("Pokemon Id is required", 400);
 
   const user = await User.findById(id);
   if (!user) throw new ErrorResponse("User not found", 404);
-    const found = user.roster.find((id) => id == pokemonId);
+  const found = user.roster.find((id) => id == pokemonId);
   if (found) throw new ErrorResponse("Pokemon already added", 400);
 
-  user.roster.push( pokemonId );
+  user.roster.push(pokemonId);
   await user.save();
 
   res.status(201).json({

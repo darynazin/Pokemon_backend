@@ -6,6 +6,11 @@ const userSchema = new Schema({
   password: { type: String, required: true },
   roster: [{ type: Number }],
   score: { type: Number, default: 0 },
+  image: {
+    type: String,
+    default:
+      "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp",
+  },
 });
 
 export default model("User", userSchema);
