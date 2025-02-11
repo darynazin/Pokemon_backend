@@ -8,20 +8,28 @@ import {
   updateUser,
   deleteUser,
   addPokemonToUser,
-  deletePokemonFromUser
+  deletePokemonFromUser,
 } from "../controllers/userController.js";
 import { protect } from "../middlewares/authHandler.js";
 import User from "../models/User.js";
+import upload from "../middlewares/multerMiddleware.js";
 
 const userRouter = Router();
 
-userRouter.route("/register").post(register);
+userRouter.post("/register", upload.single("image"), register);
 userRouter.route("/login").post(login);
 userRouter.route("/logout").post(logout);
 userRouter.route("/").get(getUsers);
 
-userRouter.route("/:id").get(protect, getUserById).put(protect, updateUser).delete(protect, deleteUser);
-userRouter.route("/:id/roster/:pokemonId").post(protect, addPokemonToUser).delete(protect, deletePokemonFromUser);
+userRouter
+  .route("/:id")
+  .get(protect, getUserById)
+  .put(protect, updateUser)
+  .delete(protect, deleteUser);
+userRouter
+  .route("/:id/roster/:pokemonId")
+  .post(protect, addPokemonToUser)
+  .delete(protect, deletePokemonFromUser);
 
 // Protected route to get user roster
 userRouter.get("/roster", protect, async (req, res) => {
