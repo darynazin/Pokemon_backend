@@ -9,6 +9,7 @@ import {
   deleteUser,
   addPokemonToUser,
   deletePokemonFromUser,
+  getUsersData,
 } from "../controllers/userController.js";
 import { protect } from "../middlewares/authHandler.js";
 import User from "../models/User.js";
@@ -20,6 +21,7 @@ userRouter.post("/register", upload.single("image"), register);
 userRouter.route("/login").post(login);
 userRouter.route("/logout").post(logout);
 userRouter.route("/").get(getUsers);
+userRouter.route("/me").get(protect, getUsersData);
 
 userRouter
   .route("/:id")
@@ -27,7 +29,7 @@ userRouter
   .put(protect, updateUser)
   .delete(protect, deleteUser);
 userRouter
-  .route("/:id/roster/:pokemonId")
+  .route("/roster/:pokemon")
   .post(protect, addPokemonToUser)
   .delete(protect, deletePokemonFromUser);
 
