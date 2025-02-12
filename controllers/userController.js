@@ -93,6 +93,9 @@ export const login = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     success: true,
     token,
+    username: user.username,
+    email: user.email,
+    image: user.image,
   });
 });
 
@@ -148,8 +151,8 @@ export const addPokemonToUser = asyncHandler(async (req, res) => {
 
   if (!pokemon) throw new ErrorResponse("Pokemon is required", 400);
 
-  const user = req.user
-  
+  const user = req.user;
+
   if (!user) throw new ErrorResponse("User not found", 404);
   const found = user.roster.find((pok) => pok == pokemon);
   if (found) throw new ErrorResponse("Pokemon already added", 400);
@@ -165,7 +168,7 @@ export const addPokemonToUser = asyncHandler(async (req, res) => {
 
 export const deletePokemonFromUser = asyncHandler(async (req, res) => {
   const { pokemon } = req.params;
-  const user = req.user
+  const user = req.user;
   if (!user) throw new ErrorResponse("User not found", 404);
 
   const index = user.roster.findIndex((pok) => pok == pokemon);
@@ -180,13 +183,12 @@ export const deletePokemonFromUser = asyncHandler(async (req, res) => {
   });
 });
 
-
 export const getUsersData = asyncHandler(async (req, res) => {
-  const user = req.user
-  
-    res.status(200).json({
-      username: user.username,
-      roster: user.roster,
-      score: user.score
-    });
+  const user = req.user;
+
+  res.status(200).json({
+    username: user.username,
+    roster: user.roster,
+    score: user.score,
+  });
 });
