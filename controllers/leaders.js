@@ -9,26 +9,29 @@ export const getLeaders = asyncHandler(async (req, res) => {
 });
 
 export const addScore = asyncHandler(async (req, res) => {
-  const { userId, score } = req.body;
+  const { score } = req.body;
+  const user = req.user;
 
-  if (!userId || score === undefined)
-    throw new ErrorResponse("userId and score are required", 400);
+  if (!user.id || score === undefined)
+    throw new ErrorResponse("User and score are required", 400);
 
-  const user = await User.findById(userId);
-  if (!user) throw new ErrorResponse("User not found", 404);
+  const foundUser = await User.findById(user.id);
+  if (!foundUser) throw new ErrorResponse("User not found", 404);
 
-  let found = await Leader.findOne({ username: user.username });
+  let foundLeader = await Leader.findOne({ username: user.username });
 
-  if (!found) {
-    found = new Leader({ username: user.username, score });
-    await found.save();
+  if (!foundLeader) {
+    foundLeader = new Leader({ username: user.username, score });
+    await foundLeader.save();
 
-    return res.status(201).json({ message: "User added successfully", found });
+    return res.status(201).json({ message: "User added successfully", leader: foundLeader });
   }
 
-  found.score = score;
-  await found.save();
-  await user.updateOne({score});
+  foundLeader.score += score;
+  await foundLeader.save();
 
-  res.status(200).json({ message: "User updated successfully", leader: found });
+  foundUser.score += score;
+  await foundUser.save();
+
+  res.status(200).json({ message: "User updated successfully", leader: foundLeader });
 });
