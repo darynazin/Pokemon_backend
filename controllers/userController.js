@@ -190,5 +190,6 @@ export const getUsersData = asyncHandler(async (req, res) => {
     username: user.username,
     roster: user.roster,
     score: user.score,
+    image: user. image,
   });
 });
