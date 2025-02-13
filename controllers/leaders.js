@@ -14,14 +14,11 @@ export const addScore = asyncHandler(async (req, res) => {
 
   if (!user.id || score === undefined)
     throw new ErrorResponse("User and score are required", 400);
-
-  const foundUser = await User.findById(user.id);
-  if (!foundUser) throw new ErrorResponse("User not found", 404);
-
+  
   let foundLeader = await Leader.findOne({ username: user.username });
 
   if (!foundLeader) {
-    foundLeader = new Leader({ username: user.username, score });
+    foundLeader = new Leader({ username: user.username, score: 0 });
     await foundLeader.save();
 
     return res.status(201).json({ message: "User added successfully", leader: foundLeader });
