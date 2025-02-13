@@ -139,6 +139,16 @@ export const updateUser = asyncHandler(async (req, res) => {
   res.status(200).json(user);
 });
 
+export const updateUserScore = asyncHandler(async (req, res) => {
+  const name = req.body.username;
+  console.log(name);
+  const user = await User.findOne({ username: name });
+  if (!user) throw new ErrorResponse("User not found", 404);
+  user.score += 1;
+  await user.save();
+  res.status(200).json(user);
+});
+
 export const deleteUser = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const user = await User.findByIdAndDelete(id);
@@ -190,5 +200,6 @@ export const getUsersData = asyncHandler(async (req, res) => {
     username: user.username,
     roster: user.roster,
     score: user.score,
+    image: user.image,
   });
 });
