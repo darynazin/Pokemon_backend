@@ -17,6 +17,7 @@ export const addScore = asyncHandler(async (req, res) => {
 
   let foundLeader = await Leader.findOne({ username: user.username });
 
+
   if (!foundLeader) {
     const newLeader = new Leader({ username: user.username, score: 0 });
     await newLeader.save();
@@ -25,6 +26,8 @@ export const addScore = asyncHandler(async (req, res) => {
       .status(201)
       .json({ message: "Leader added successfully", leader: foundLeader });
   }
+
+ let foundUser = await User.findById(user.id);
 
   foundLeader.score += score;
   await foundLeader.save();
